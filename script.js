@@ -139,7 +139,8 @@ const theaterBtn = document.querySelector(".theater-btn")
 const fullScreenBtn = document.querySelector(".full-screen-btn")
 const miniPlayerBtn = document.querySelector(".mini-player-btn")
 const captionsBtn = document.querySelector(".captions-btn")
-const speedBtn = document.querySelector(".speed-btn")
+const speedContainer = document.querySelector(".speed-container");
+const speedBtn = document.querySelector(".speed-btn");
 const muteBtn  = document.querySelector(".mute-btn")
 
 
@@ -201,15 +202,26 @@ function handleTimelineUpdate(e){
 }
 
 //Playback Speed 
-speedBtn.addEventListener("click", changePlaybackSpeed)
+speedBtn.addEventListener("click", function(event) {
+    event.stopPropagation(); // Prevent event from bubbling up to the document
+    speedContainer.classList.toggle("show");
+});
 
-function changePlaybackSpeed(){ 
-    let newPlaybackRate = video.playbackRate + .25
-    if(newPlaybackRate > 2) newPlaybackRate = 0.25
-    video.playbackRate = newPlaybackRate
-    speedBtn.textContent = `${newPlaybackRate}`
-}
+document.addEventListener("click", function(event) {
+    if (!speedContainer.contains(event.target)) {
+        speedContainer.classList.remove("show");
+    }
+});
 
+const speedOptions = document.querySelectorAll(".speed-option");
+speedOptions.forEach(option => {
+    option.addEventListener("click", function() {
+        const speed = this.getAttribute("data-speed");
+        speedBtn.textContent = `${speed}`;
+        video.playbackRate = parseFloat(speed);
+        speedContainer.classList.remove("show");
+    });
+});
 //Duration
 video.addEventListener("timeupdate", () => { 
     currentTimeElem.textContent = formatDuration(video.currentTime)

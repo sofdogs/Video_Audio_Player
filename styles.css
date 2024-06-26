@@ -292,3 +292,137 @@ video{
     width: 100px;
     transform: scaleX(1);
 }
+
+.speed-container { 
+    position: relative;
+    display: inline-block;
+    gap: .10rem; 
+    padding: .25rem; 
+}
+
+.speed-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    height: 30px;
+    width: 60px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 150ms ease-in-out;
+}
+
+.speed-btn:hover {
+    opacity: 1;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    bottom: 101%; 
+    background-color: #f9f9f9;
+    min-width: 50px;
+    color:black;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.dropdown-content button {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.dropdown-content button:hover {
+    width:100%;
+    background-color: #c0c0c0;
+}
+
+.speed-container.show .dropdown-content {
+    display: block;
+}
+
+
+/*
+.video-control-ctn .controls  .speed-btn {
+    background: none;
+    border: none;
+    color: inherit;
+    padding: 0;
+    height: 30px;
+    width: 40px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    opacity: 0.85;
+    transition: opacity 150ms ease-in-out;
+}
+
+
+.video-control-ctn .controls .speed-btn:hover {
+    opacity: 1;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: whitesmoke;
+    bottom: 100%;
+    color: black;
+    min-width: 60px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+.dropdown-content button {
+    display:none;
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+.controls .speed-btn:hover .dropdown-content {
+    display: block;
+}
+/*
+.video-control-ctn .controls .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: whitesmoke;
+    bottom: 100%;
+    color: black;
+    min-width: 60px;
+    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+    z-index: 1;
+}
+
+.video-control-ctn .controls .speed-btn .dropdown-content button {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+    width: 100%;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+}
+
+.video-control-ctn .controls .dropdown-content button:hover {
+    background-color: #cccccc;
+}
+
+.video-control-ctn .controls:hover .dropdown-content {
+    display: block;
+}
+*/
