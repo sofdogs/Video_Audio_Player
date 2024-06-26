@@ -39,7 +39,7 @@ video{
     bottom: 0; 
     left: 0; 
     right: 0; 
-    color: green;
+    color: whitesmoke;
     z-index: 100;
     opacity: 0;
     transition: opacity 150ms ease-in-out;
@@ -49,7 +49,7 @@ video{
     content: ""; 
     position: absolute;
     bottom: 0; 
-    background: linear-gradient(to top, rgba(0,0,0,.75), transparent);
+    background: linear-gradient(to top, rgba(0,0,0,.85), transparent);
     width: 100%; 
     aspect-ratio: 6/1; /* makes sure no matter how tall going to cover same percentage of our video based on width*/
     z-index: -1; 
@@ -131,17 +131,7 @@ video{
     display: flex;
     align-items: center;
 }
-.volume-slider{ 
-    width: 0; 
-    transform-origin: left;
-    transform: scaleX(0);
-    transition: width 150ms ease-in-out;
-}
-.volume-container:hover .volume-slider,
-.volume-slider:focus-within { 
-    width: 100px;
-    transform: scaleX(1);
-}
+
 
 .duration-container{ 
     display: flex; 
@@ -252,4 +242,53 @@ video{
     width: 100%; 
     height: 100%; 
     display: none; 
+}
+
+/* Customize the slider track */
+.volume-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: white;
+    border-radius: 5px;
+}
+
+.volume-slider::-moz-range-track {
+    width: 100%;
+    height: 8px;
+    cursor: pointer;
+    background: white; 
+    border-radius: 5px;
+}
+
+.volume-slider::-webkit-slider-thumb {
+    height: 16px;
+    width: 16px;
+    border-radius: 50%;
+    background: yellow; 
+    cursor: pointer;
+    -webkit-appearance: none;
+    margin-top: -4px; 
+}
+
+.volume-slider::-moz-range-thumb {
+    height: 19px;
+    width: 16px;
+    border-radius: 50%;
+    background: yellow ;
+    cursor: pointer;
+    margin-top: -4px; 
+}
+
+.volume-slider{ 
+    width: 0; 
+    transform-origin: left;
+    transform: scaleX(0);
+    transition: width 150ms ease-in-out;
+    background:  white;
+}
+.volume-container:hover .volume-slider,
+.volume-slider:focus-within { 
+    width: 100px;
+    transform: scaleX(1);
 }

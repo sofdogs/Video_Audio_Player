@@ -1,18 +1,36 @@
 // script.js 
-document.getElementById('videoInput') 
-    .addEventListener('change', handleFileSelect); 
-  
-function handleFileSelect(event) { 
-    const file = event.target.files[0]; 
-    if (file) { 
-        extractAndPlayAudio(file); 
-    } 
-} 
-  
+
+let audioContext;
+let audioDownladed = false; // for play button 
+
+window.onload = function (){ 
+    audioContext =  new(window.AudioContext || window.webkitAudioContext)(); 
+}
+
+// to conver the video into a file/blob
+async function videoToBlob(src){ 
+    try{ 
+        const response = await fetch(src); 
+        const videoBlob = await response.blob();
+        await extractAndPlayAudio(videoBlob);
+    } catch (error) { 
+        console.error('Error fetching src. ', error);
+    }
+}
+
 async function extractAndPlayAudio(videoFile) { 
+
+    if(!audioContext){ 
+        audioContext = new(window.AudioContext || window.webkitAudioContext)(); 
+    }
+
+    if(audioContext.state === 'suspended'){ 
+        await audioContext.resume();
+    }
+ 
     // creating audio context env 
-    const audioContext =  
-        new (window.AudioContext || window.webkitAudioContext)(); 
+    //const audioContext =  
+       // new (window.AudioContext || window.webkitAudioContext)(); 
 
     // instance of FileReader to read contents of video file as ArrayBuffer
     const reader = new FileReader();  
@@ -112,31 +130,28 @@ function downloadBlob(blob, filename) {
     window.URL.revokeObjectURL(url);
 }
 
-
-/*
+/* Video scripts */
+const video = document.querySelector("video")
+const videoContainer  = document.querySelector(".video-container")
+// buttons ...
 const playPauseBtn = document.querySelector(".play-pause-btn")
 const theaterBtn = document.querySelector(".theater-btn")
 const fullScreenBtn = document.querySelector(".full-screen-btn")
 const miniPlayerBtn = document.querySelector(".mini-player-btn")
-const video = document.querySelector("video")
-
-const videoContainer  = document.querySelector(".video-container")
-
+const captionsBtn = document.querySelector(".captions-btn")
+const speedBtn = document.querySelector(".speed-btn")
 const muteBtn  = document.querySelector(".mute-btn")
-const volumeSlider  = document.querySelector(".volume-slider")
 
+
+// misc ...
+const volumeSlider  = document.querySelector(".volume-slider")
 const currentTimeElem = document.querySelector(".current-time")
 const totalTimeElem = document.querySelector(".total-time")
-
-const captionsBtn = document.querySelector(".captions-btn")
-
-const speedBtn = document.querySelector(".speed-btn")
-
 const previewImg = document.querySelector(".preview-img")
 const thumbnailImg = document.querySelector(".thumbnail-img")
 const timelineContainer = document.querySelector(".timeline-ctn")
 
-// listen to pause/play video with space bar or k key 
+// keyboard event listeners ... 
 document.addEventListener("keydown", e=>{ 
     const tagName = document.activeElement.tagName.toLowerCase() 
 
@@ -170,22 +185,21 @@ document.addEventListener("keydown", e=>{
         case "c": 
             toggleCaptions()
             break
-        case "a": 
-            extractAndPlayAudio(video)
-            break
     }
 })
 
 //Timeline
 timelineContainer.addEventListener("mousemove",handleTimelineUpdate)
+
 function handleTimelineUpdate(e){ 
     const rect = timelineContainer.getBoundingClientRect()
     const percent = Math.min(Math.max(0,e.x-rect.x), rect.width)/rect.width
-    const previewImgNumber = Math.max(1, Math.floor((percent * videoDuration)/10))
+    const previewImgNumber = Math.max(1, Math.floor((percent * video.duration)/10))
     const previewImgSrc = `assets/previewImgs/preview${previewImgNumber}.jpg`
     previewImg.src = previewImgSrc
     timelineContainer.getElementsByClassName.setProperty("--preview-position", percent)
 }
+
 //Playback Speed 
 speedBtn.addEventListener("click", changePlaybackSpeed)
 
@@ -224,6 +238,7 @@ function skip(duration) {
 }
 
 //Captions
+/*
 const captions = video.textTracks[0]
 captions.mode = "hidden"
 
@@ -234,6 +249,7 @@ function toggleCaptions(){
     captions.mode = isHidden ? "showing" : "hidden"
     videoContainer.classList.toggle("captions", isHidden)
 }
+*/
 
 //Volume 
 muteBtn.addEventListener("click", toggleMute)
@@ -309,10 +325,12 @@ function togglePlay(){
 // event listeners to switch between play and pause icons 
 video.addEventListener("play", () => { 
     videoContainer.classList.remove("paused")
+    if(!audioDownladed){ 
+        videoToBlob(video.src);
+        audioDownladed = true;
+    }
 })
 
 video.addEventListener("pause", () => { 
     videoContainer.classList.add("paused")
 })
-
-*/
