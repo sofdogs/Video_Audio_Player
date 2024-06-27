@@ -34,12 +34,11 @@
 <body>
     <div class="video-container paused" data-volume-level = "high">
         <video id="video"></video>
-        <img class="thumbnail-img">
         <div class="video-control-ctn">
             <div class="timeline-ctn">
                 <div class="timeline">
-                    <img class="preview-img">
                     <div class="thumb-indicator"></div>
+                    <div class = "progress-bar"></div>
                 </div>
             </div>
             <div class="controls">
@@ -107,8 +106,9 @@
         <!-- </video>        --->
     </div>
     <input type="file"
-    id="videoInput"
-    accept="video/*"> 
+        id="videoInput"
+        accept="video/*"
+    > 
     <audio id="audio" controls style="display: none;"></audio>
     <a id="downloadLink" style="display: none;" download="output.wav">Download WAV</a>
 </body>

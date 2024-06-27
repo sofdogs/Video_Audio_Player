@@ -171,12 +171,13 @@ const currentTimeElem = document.querySelector(".current-time")
 const totalTimeElem = document.querySelector(".total-time")
 const previewImg = document.querySelector(".preview-img")
 const thumbnailImg = document.querySelector(".thumbnail-img")
-const timelineContainer = document.querySelector(".timeline")
+const timelineContainer = document.querySelector(".timeline-ctn")
+const timeline = document.querySelector(".timeline")
+const progressBar = document.querySelector(".progress-bar")
 
 console.log("Video element:", video);
 console.log("Video container:", videoContainer);
 console.log("Timeline container:", timelineContainer);
-console.log("Preview image:", previewImg);
 console.log("Thumbnail image:", thumbnailImg);
 // keyboard event listeners ... 
 document.addEventListener("keydown", e=>{ 
@@ -211,60 +212,52 @@ document.addEventListener("keydown", e=>{
                 break
     }
 })
-
-//Timeline
 timelineContainer.addEventListener("mousemove", handleTimelineUpdate)
-console.log("Added mousemove event listener to timeline container");
-
 timelineContainer.addEventListener("mousedown", toggleScrubbing)
-console.log("Added mousedown event listener to timeline container");
-
-
 document.addEventListener("mouseup", e => {
-    console.log("Mouseup event detected");
-    if (isScrubbing) toggleScrubbing(e)
-});
+  if (isScrubbing) toggleScrubbing(e)
+})
 document.addEventListener("mousemove", e => {
-    console.log("Mousemove event detected");
-    if (isScrubbing) handleTimelineUpdate(e)
-});
+  if (isScrubbing) handleTimelineUpdate(e)
+})
 
 let isScrubbing = false
 let wasPaused
-
 function toggleScrubbing(e) {
-    const rect = timelineContainer.getBoundingClientRect()
-    const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
-    isScrubbing = (e.buttons & 1) === 1
-    videoContainer.classList.toggle("scrubbing", isScrubbing)
-    if (isScrubbing) {
-      wasPaused = video.paused
-      video.pause()
-    } else {
-      video.currentTime = percent * video.duration
-      if (!wasPaused) video.play()
-    }
-  
-    handleTimelineUpdate(e)
+  const rect = timelineContainer.getBoundingClientRect()
+  const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
+  isScrubbing = (e.buttons & 1) === 1
+  videoContainer.classList.toggle("scrubbing", isScrubbing)
+  if (isScrubbing) {
+    wasPaused = video.paused
+    video.pause()
+  } else {
+    video.currentTime = percent * video.duration
+    if (!wasPaused) video.play()
   }
 
-function handleTimelineUpdate(e) {
-    const rect = timelineContainer.getBoundingClientRect()
-    const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
-    const previewImgNumber = Math.max(
-        1,
-        Math.floor((percent * video.duration) / 10)
-    )
-    const previewImgSrc = `assets/previewImgs/preview${previewImgNumber}.jpg`
-    previewImg.src = previewImgSrc
-    timelineContainer.style.setProperty("--preview-position", percent)
-
-    if (isScrubbing) {
-        e.preventDefault()
-        thumbnailImg.src = previewImgSrc
-        timelineContainer.style.setProperty("--progress-position", percent)
-    }
+  handleTimelineUpdate(e)
 }
+
+function handleTimelineUpdate(e) {
+  const rect = timelineContainer.getBoundingClientRect()
+  const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
+  const previewImgNumber = Math.max(
+    1,
+    Math.floor((percent * video.duration) / 10)
+  )
+  const previewImgSrc = `assets/previewImgs/preview${previewImgNumber}.jpg`
+  previewImg.src = previewImgSrc
+  timelineContainer.style.setProperty("--preview-position", percent)
+
+  if (isScrubbing) {
+    e.preventDefault()
+    thumbnailImg.src = previewImgSrc
+    timelineContainer.style.setProperty("--progress-position", percent)
+  }
+}
+
+
 
 //Playback Speed 
 speedBtn.addEventListener("click", function(event) {

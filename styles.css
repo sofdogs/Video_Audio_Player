@@ -153,10 +153,58 @@ video{
     margin-inline: .5rem;
     cursor: pointer;
     display: flex;
+    transition: 0.3s;
     background-color: rgba(100,100,100,.5);
     align-items: center;
 }
 
+.timeline {
+    background-color: rgba(100, 100, 100, .5);
+    height: 3px;
+    width: 100%;
+    position: relative
+  }
+  
+  .timeline::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: calc(100% - var(--preview-position) * 100%);
+    background-color: rgb(150, 150, 150);
+    display: none;
+  }
+  
+  .timeline::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    right: calc(100% - var(--progress-position) * 100%);
+    background-color: red;
+  }
+  
+  .timeline .thumb-indicator {
+    --scale: 0;
+    position: absolute;
+    transform: translateX(-50%) scale(var(--scale));
+    height: 200%;
+    top: -50%;
+    left: calc(var(--progress-position) * 100%);
+    background-color: red;
+    border-radius: 50%;
+    transition: transform 150ms ease-in-out;
+    aspect-ratio: 1 / 1;
+  }
+  .video-container.scrubbing .thumb-indicator,
+.timeline-ctn:hover .thumb-indicator{ 
+    --scale:2;
+}
+
+
+/*
 .timeline-ctn:hover .timeline{ 
     height: 100%;
 }
@@ -167,6 +215,7 @@ video{
     position: relative;
 }
 
+/*
 .timeline::before{ 
     content: "";
     position: absolute; 
@@ -178,9 +227,16 @@ video{
     display: none;
 }
 
+.timeline::-webkit-slider-runnable-track{ 
+    width: 100%;
+    height: 10px; 
+    cursor:  pointer; 
+    background: black;
+}
+*/
+/*
 .timeline::after{
     background-color: red;
-    content: "";
     position: absolute; 
     left: 0; 
     top: 0; 
@@ -200,33 +256,7 @@ video{
     transition: transform 150ms ease-in-out;
     aspect-ratio: 1/1;
 }
-.timeline .preview-img {
-    position: absolute;
-    height: 80px;
-    aspect-ratio: 16 / 9;
-    top: -1rem;
-    transform: translate(-50%, -100%);
-    left: calc(var(--preview-position) * 100%);
-    border-radius: .25rem;
-    border: 2px solid white;
-    display: none;
-  }
-  
-  .thumbnail-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    display: none;
-  }
-  
 
-.video-container.scrubbing .thumbnail-img{ 
-    display: block;
-}
 
 .video-container.scrubbing .thumb-indicator,
 .timeline-ctn:hover .thumb-indicator{ 
@@ -247,7 +277,7 @@ video{
 .timeline-ctn:hover .timeline{ 
    height: 100%;
 }
-
+*/
 
 /* Customize the slider track */
 .volume-slider::-webkit-slider-runnable-track {
