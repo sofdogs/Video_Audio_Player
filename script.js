@@ -1,12 +1,32 @@
 // script.js 
+document.getElementById('videoInput') 
+    .addEventListener('change', handleFileSelect); 
+  
 
+console.log("Script loaded");
 let audioContext;
-let audioDownladed = false; // for play button 
+let audioDownloaded = false;
+
 
 window.onload = function (){ 
+    console.log("Window loaded");
     audioContext =  new(window.AudioContext || window.webkitAudioContext)(); 
 }
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const video = document.getElementById('video');
+        const url = URL.createObjectURL(file);
+        video.src = url;
+        video.play();
+        video.onloadeddata = () => {
+            extractAndPlayAudio(file);
+        };
+    }
+}
+    
 
+/*
 // to conver the video into a file/blob
 async function videoToBlob(src){ 
     try{ 
@@ -17,6 +37,7 @@ async function videoToBlob(src){
         console.error('Error fetching src. ', error);
     }
 }
+*/
 
 async function extractAndPlayAudio(videoFile) { 
 
@@ -138,7 +159,7 @@ const playPauseBtn = document.querySelector(".play-pause-btn")
 const theaterBtn = document.querySelector(".theater-btn")
 const fullScreenBtn = document.querySelector(".full-screen-btn")
 const miniPlayerBtn = document.querySelector(".mini-player-btn")
-const captionsBtn = document.querySelector(".captions-btn")
+//const captionsBtn = document.querySelector(".captions-btn")
 const speedContainer = document.querySelector(".speed-container");
 const speedBtn = document.querySelector(".speed-btn");
 const muteBtn  = document.querySelector(".mute-btn")
@@ -150,8 +171,13 @@ const currentTimeElem = document.querySelector(".current-time")
 const totalTimeElem = document.querySelector(".total-time")
 const previewImg = document.querySelector(".preview-img")
 const thumbnailImg = document.querySelector(".thumbnail-img")
-const timelineContainer = document.querySelector(".timeline-ctn")
+const timelineContainer = document.querySelector(".timeline")
 
+console.log("Video element:", video);
+console.log("Video container:", videoContainer);
+console.log("Timeline container:", timelineContainer);
+console.log("Preview image:", previewImg);
+console.log("Thumbnail image:", thumbnailImg);
 // keyboard event listeners ... 
 document.addEventListener("keydown", e=>{ 
     const tagName = document.activeElement.tagName.toLowerCase() 
@@ -183,27 +209,66 @@ document.addEventListener("keydown", e=>{
             case "l": 
                 skip (5) 
                 break
-        case "c": 
-            toggleCaptions()
-            break
     }
 })
 
 //Timeline
-timelineContainer.addEventListener("mousemove",handleTimelineUpdate)
+timelineContainer.addEventListener("mousemove", handleTimelineUpdate)
+console.log("Added mousemove event listener to timeline container");
 
-function handleTimelineUpdate(e){ 
+timelineContainer.addEventListener("mousedown", toggleScrubbing)
+console.log("Added mousedown event listener to timeline container");
+
+
+document.addEventListener("mouseup", e => {
+    console.log("Mouseup event detected");
+    if (isScrubbing) toggleScrubbing(e)
+});
+document.addEventListener("mousemove", e => {
+    console.log("Mousemove event detected");
+    if (isScrubbing) handleTimelineUpdate(e)
+});
+
+let isScrubbing = false
+let wasPaused
+
+function toggleScrubbing(e) {
     const rect = timelineContainer.getBoundingClientRect()
-    const percent = Math.min(Math.max(0,e.x-rect.x), rect.width)/rect.width
-    const previewImgNumber = Math.max(1, Math.floor((percent * video.duration)/10))
+    const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
+    isScrubbing = (e.buttons & 1) === 1
+    videoContainer.classList.toggle("scrubbing", isScrubbing)
+    if (isScrubbing) {
+      wasPaused = video.paused
+      video.pause()
+    } else {
+      video.currentTime = percent * video.duration
+      if (!wasPaused) video.play()
+    }
+  
+    handleTimelineUpdate(e)
+  }
+
+function handleTimelineUpdate(e) {
+    const rect = timelineContainer.getBoundingClientRect()
+    const percent = Math.min(Math.max(0, e.x - rect.x), rect.width) / rect.width
+    const previewImgNumber = Math.max(
+        1,
+        Math.floor((percent * video.duration) / 10)
+    )
     const previewImgSrc = `assets/previewImgs/preview${previewImgNumber}.jpg`
     previewImg.src = previewImgSrc
-    timelineContainer.getElementsByClassName.setProperty("--preview-position", percent)
+    timelineContainer.style.setProperty("--preview-position", percent)
+
+    if (isScrubbing) {
+        e.preventDefault()
+        thumbnailImg.src = previewImgSrc
+        timelineContainer.style.setProperty("--progress-position", percent)
+    }
 }
 
 //Playback Speed 
 speedBtn.addEventListener("click", function(event) {
-    event.stopPropagation(); // Prevent event from bubbling up to the document
+    event.stopPropagation(); 
     speedContainer.classList.toggle("show");
 });
 
@@ -222,9 +287,12 @@ speedOptions.forEach(option => {
         speedContainer.classList.remove("show");
     });
 });
+
 //Duration
 video.addEventListener("timeupdate", () => { 
     currentTimeElem.textContent = formatDuration(video.currentTime)
+    const percent = video.currentTime / video.duration
+    timelineContainer.style.setProperty("--progress-position", percent)
 })
 
 video.addEventListener("loadeddata", () => { 
@@ -337,9 +405,8 @@ function togglePlay(){
 // event listeners to switch between play and pause icons 
 video.addEventListener("play", () => { 
     videoContainer.classList.remove("paused")
-    if(!audioDownladed){ 
-        videoToBlob(video.src);
-        audioDownladed = true;
+    if (!audioDownloaded) {
+        audioDownloaded = true;
     }
 })
 
